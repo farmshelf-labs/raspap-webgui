@@ -42,6 +42,12 @@ function DisplayHostAPDConfig()
         }
     }
 
+    $macAccepts = "";
+    $macsVal = file_get_contents('/etc/hostapd.accept');
+    if ($macsVal) {
+        $macAccepts = $macsVal;
+    }
+
     exec('cat '. RASPI_HOSTAPD_CONFIG, $hostapdconfig);
     exec('pidof hostapd | wc -l', $hostapdstatus);
     exec('iwgetid '. RASPI_WIFI_CLIENT_INTERFACE. ' -r', $wifiNetworkID);
@@ -68,6 +74,7 @@ function DisplayHostAPDConfig()
         "hostapdstatus",
         "managedModeEnabled",
         "interfaces",
+        "macAccepts",
         "arrConfig",
         "arr80211Standard",
         "selectedHwMode",
@@ -110,6 +117,24 @@ function SaveHostAPDConfig($wpa_array, $enc_types, $modes, $interfaces, $status)
         if (isset($_POST['wifiAPEnable'])) {
             $wifiAPEnable = 1;
         }
+    }
+
+    // TODO:
+    // Only enable is there are valid MAC addrs in the textarea
+    // Check for MAC ACL deny
+    $macACLDeny = 0;
+    $macAccept = [];
+    $MAC_REGEX = '/([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})/';
+    if (isset($_POST['macWhitelist'])) {
+        $macIn = $_POST['macWhitelist'];
+        $numMatch = preg_match_all($MAC_REGEX, $macIn, $matches);
+        if ($numMatch > 0) {
+            $macACLDeny = 1;
+            $macAccept = $matches[0];
+        }
+    }
+    if ($macACLDeny == 0 && is_file('/etc/hostapd.accept')) {
+        unlink('/etc/hostapd.accept');
     }
 
     // Check for Logfile output checkbox
@@ -205,6 +230,17 @@ function SaveHostAPDConfig($wpa_array, $enc_types, $modes, $interfaces, $status)
         } else {
             $config.= 'interface='.$_POST['interface'].PHP_EOL;
         }
+
+        if ($macACLDeny == 1) {
+            $config.= 'macaddr_acl=1'.PHP_EOL;
+            $config.= 'accept_mac_file=/etc/hostapd.accept'.PHP_EOL;
+
+            file_put_contents("/tmp/hostapt.accept", join($macAccept, "\n").PHP_EOL);
+            system("sudo cp /tmp/hostapt.accept " . '/etc/hostapd.accept', $return);
+        } else {
+            $config.= 'macaddr_acl=0'.PHP_EOL;
+        }
+
         $config.= 'wpa='.$_POST['wpa'].PHP_EOL;
         $config.= 'wpa_pairwise='.$_POST['wpa_pairwise'].PHP_EOL;
         $config.= 'country_code='.$_POST['country_code'].PHP_EOL;

@@ -141,6 +141,15 @@
                 </div>
               </div>
             </div>
+
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="mac_whitelist"><?php echo _("MAC address whitelisting (one per line)") ?></label>
+                <textarea id="mac_whitelist" class="form-control" name="macWhitelist" aria-describedby="mac_whitelist_help"><?php echo $macAccepts ?></textarea>
+                <span id="mac_whitelist_help" class="help-block"><?php echo _("Whitelist MAC addresses for hostapd (one per line). Leave blank to disable feature") ?></span>
+              </div>
+            </div>
+
             <div class="row">
               <div class="col-md-6 mb-2">
                 <div class="checkbox">
