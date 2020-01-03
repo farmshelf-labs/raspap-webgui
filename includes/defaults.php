@@ -16,6 +16,7 @@ $defaults = [
   'RASPI_DNSMASQ_CONFIG' => '/etc/dnsmasq.conf',
   'RASPI_DNSMASQ_LEASES' => '/var/lib/misc/dnsmasq.leases',
   'RASPI_HOSTAPD_CONFIG' => '/etc/hostapd/hostapd.conf',
+  'RASPI_HOSTAPD_ACCEPT' => '/etc/hostapd/hostapd.accept',
   'RASPI_DHCPCD_CONFIG' => '/etc/dhcpcd.conf',
   'RASPI_WPA_SUPPLICANT_CONFIG' => '/etc/wpa_supplicant/wpa_supplicant.conf',
   'RASPI_HOSTAPD_CTRL_INTERFACE' => '/var/run/hostapd',

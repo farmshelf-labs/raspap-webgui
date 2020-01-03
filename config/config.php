@@ -12,6 +12,7 @@ define('RASPI_CACHE_PATH', sys_get_temp_dir() . '/raspap');
 define('RASPI_DNSMASQ_CONFIG', '/etc/dnsmasq.conf');
 define('RASPI_DNSMASQ_LEASES', '/var/lib/misc/dnsmasq.leases');
 define('RASPI_HOSTAPD_CONFIG', '/etc/hostapd/hostapd.conf');
+define('RASPI_HOSTAPD_ACCEPT', '/etc/hostapd/hostapd.accept');
 define('RASPI_DHCPCD_CONFIG', '/etc/dhcpcd.conf');
 define('RASPI_WPA_SUPPLICANT_CONFIG', '/etc/wpa_supplicant/wpa_supplicant.conf');
 define('RASPI_HOSTAPD_CTRL_INTERFACE', '/var/run/hostapd');

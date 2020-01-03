@@ -303,6 +303,8 @@ function patch_system_files() {
         "/sbin/wpa_cli -i wlan[0-9] reconfigure"
         "/sbin/wpa_cli -i wlan[0-9] select_network"
         "/bin/cp /tmp/hostapddata /etc/hostapd/hostapd.conf"
+        "/bin/cp /tmp/hostapd.accept /etc/hostapd/hostapd.accept"
+        "/bin/rm /etc/hostapd/hostapd.accept"
         "/bin/systemctl start hostapd.service"
         "/bin/systemctl stop hostapd.service"
         "/bin/systemctl start dnsmasq.service"

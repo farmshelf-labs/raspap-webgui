@@ -43,7 +43,7 @@ function DisplayHostAPDConfig()
     }
 
     $macAccepts = "";
-    $macsVal = file_get_contents('/etc/hostapd.accept');
+    $macsVal = file_get_contents(RASPI_HOSTAPD_ACCEPT);
     if ($macsVal) {
         $macAccepts = $macsVal;
     }
@@ -125,7 +125,7 @@ function SaveHostAPDConfig($wpa_array, $enc_types, $modes, $interfaces, $status)
     $macACLDeny = 0;
     $macAccept = [];
     $MAC_REGEX = '/([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})/';
-    if (isset($_POST['macWhitelist'])) {
+    if (isset($_POST['macWhitelist']) && !empty($_POST['macWhitelist'])) {
         $macIn = $_POST['macWhitelist'];
         $numMatch = preg_match_all($MAC_REGEX, $macIn, $matches);
         if ($numMatch > 0) {
@@ -133,8 +133,9 @@ function SaveHostAPDConfig($wpa_array, $enc_types, $modes, $interfaces, $status)
             $macAccept = $matches[0];
         }
     }
-    if ($macACLDeny == 0 && is_file('/etc/hostapd.accept')) {
-        unlink('/etc/hostapd.accept');
+
+    if ($macACLDeny == 0 && is_file(RASPI_HOSTAPD_ACCEPT)) {
+        system("sudo rm " . RASPI_HOSTAPD_ACCEPT);
     }
 
     // Check for Logfile output checkbox
@@ -233,10 +234,10 @@ function SaveHostAPDConfig($wpa_array, $enc_types, $modes, $interfaces, $status)
 
         if ($macACLDeny == 1) {
             $config.= 'macaddr_acl=1'.PHP_EOL;
-            $config.= 'accept_mac_file=/etc/hostapd.accept'.PHP_EOL;
+            $config.= 'accept_mac_file='.RASPI_HOSTAPD_ACCEPT.PHP_EOL;
 
-            file_put_contents("/tmp/hostapt.accept", join($macAccept, "\n").PHP_EOL);
-            system("sudo cp /tmp/hostapt.accept " . '/etc/hostapd.accept', $return);
+            file_put_contents("/tmp/hostapd.accept", join($macAccept, "\n").PHP_EOL);
+            system("sudo cp /tmp/hostapd.accept " . RASPI_HOSTAPD_ACCEPT, $return);
         } else {
             $config.= 'macaddr_acl=0'.PHP_EOL;
         }
